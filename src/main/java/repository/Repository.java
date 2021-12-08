@@ -41,6 +41,28 @@ public class Repository {
         return this.items.removeAll(items);
     }
 
+    public void closeById(int id) {
+        Issue[] result = new Issue[0];
+        for (Issue issues : getAll()) {
 
+            if (issues.getId() == id && !issues.isClose()) {
+                issues.setClose(true);
+            }
+
+        }
+    }
+
+    public void openById(int id) {
+        Issue[] result = new Issue[0];
+        for (Issue issues : getAll()) {
+
+            if (issues.getId() == id && issues.isClose()) {
+                issues.setClose(false);
+            }
+
+        }
+
+
+    }
 }
 
