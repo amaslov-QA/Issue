@@ -1,124 +1,83 @@
 package manager;
 
-
 import domain.Issue;
 import repository.Repository;
 
+import java.util.*;
+import java.util.function.Predicate;
+
 public class Manager {
-    public Repository repository = new Repository();
-    public Issue[] items = new Issue[0];
+    private Repository repo = new Repository();
 
-    public Manager(Repository repository) {
-        this.repository = repository;
+    public Manager(Repository repo) {  this.repo = repo; }
+    public Manager() {    }
+
+    Collection<Issue> issues = repo.findAll();
+
+    public void addIssue(Issue issue) {
+        repo.save(issue);
     }
 
 
-    public void save(Issue issues) {
-        repository.add(issues);
-    }
-
-
-    public Issue[] searchClose() {
-        Issue[] result = new Issue[0];
-        for (Issue issues : repository.getAll()) {
-            if (issues.isClose() == true) {
-                Issue[] tmp = new Issue[result.length + 1];
-                System.arraycopy(result, 0, tmp, 0, result.length);
-                tmp[tmp.length - 1] = issues;
-                result = tmp;
-            }
-
-        }
-        return result;
-    }
-
-    public Issue[] searchOpen() {
-        Issue[] result = new Issue[0];
-        for (Issue issues : repository.getAll()) {
-            if (issues.isClose() == false) {
-                Issue[] tmp = new Issue[result.length + 1];
-                System.arraycopy(result, 0, tmp, 0, result.length);
-                tmp[tmp.length - 1] = issues;
-                result = tmp;
+    public Collection<Issue> openedIssues() {
+        Collection<Issue> result = new LinkedList<>();
+        for (Issue issue: issues) {
+            if (issue.isOpen()) {
+                result.add(issue);
             }
         }
         return result;
     }
 
-    public Issue[] searchByAuthor(String author) {
-        Issue[] result = new Issue[0];
-        for (Issue issues : repository.getAll()) {
-            if (issues.getAuthor() == author) {
-                Issue[] tmp = new Issue[result.length + 1];
-                System.arraycopy(result, 0, tmp, 0, result.length);
-                tmp[tmp.length - 1] = issues;
-                result = tmp;
+    public Collection<Issue> closedIssues() {
+        Collection<Issue> result = new LinkedList<>();
+        for (Issue issue: issues) {
+            if (!issue.isOpen()) {
+                result.add(issue);
             }
         }
         return result;
     }
 
-    public Issue[] searchByAssignee(String assignee) {
-        Issue[] result = new Issue[0];
-        for (Issue issues : repository.getAll()) {
-            if (issues.getAssignee().contains(assignee)) {
-                Issue[] tmp = new Issue[result.length + 1];
-                System.arraycopy(result, 0, tmp, 0, result.length);
-                tmp[tmp.length - 1] = issues;
-                result = tmp;
+
+    public Collection<Issue> findBy(Predicate<Issue> filter) {
+        Collection<Issue> result = new LinkedList<>();
+        for (Issue issue: issues) {
+            if (filter.test(issue)) {
+                result.add(issue);
             }
         }
         return result;
     }
 
-    public void closeById(int id) {
-        Issue[] result = new Issue[0];
-        for (Issue issues : repository.getAll()) {
+    public Collection<Issue> filterByAuthor(String text) {
 
-            if (issues.getId() == id && !issues.isClose()) {
-                issues.setClose(true);
+        return findBy(issue -> issue.getAuthor().equals(text));
+
+    }
+
+    public Collection<Issue> filterByAssignee(String text) {
+        return findBy(issue -> issue.getAssignee().contains(text));
+    }
+
+    public Collection<Issue> filterByLabel(String text) {
+        return findBy(issue -> issue.getLabel().contains(text));
+    }
+
+
+    public void toOpenIssue(int id) {
+        for (Issue issue: issues) {
+            if (!issue.isOpen() && issue.getId() == id) {
+                issue.setOpen(true);
             }
-
         }
     }
 
-    public void openById(int id) {
-        Issue[] result = new Issue[0];
-        for (Issue issues : repository.getAll()) {
-
-            if (issues.getId() == id && issues.isClose()) {
-                issues.setClose(false);
+    public void toCloseIssue(int id) {
+        for (Issue issue: issues) {
+            if (issue.isOpen() && issue.getId() == id) {
+                issue.setOpen(false);
             }
-
-        }
-    }
-
-    public Issue[] searchByLabelIssue(String labelIssue) {
-        Issue[] result = new Issue[0];
-        for (Issue issues : repository.getAll()) {
-            if (issues.getLabelIssue().contains(labelIssue)) {
-                Issue[] tmp = new Issue[result.length + 1];
-                System.arraycopy(result, 0, tmp, 0, result.length);
-                tmp[tmp.length - 1] = issues;
-                result = tmp;
-            }
-        }
-        return result;
-    }
-
-    public void removeById(int id) {
-
-        Issue[] result = new Issue[0];
-        for (Issue issues : repository.getAll()) {
-            if (issues.getId() == id) {
-
-
-                repository.remove(issues);
-            }
-
-
         }
     }
 }
-
-

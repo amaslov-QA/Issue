@@ -2,67 +2,19 @@ package repository;
 
 import domain.Issue;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.LinkedList;
 
 public class Repository {
-    private List<Issue> items = new ArrayList<>();
+    private Collection<Issue> issues = new LinkedList<>();
 
-    public Collection<Issue> getAll() {
-        return this.items;
+    public void save(Issue issue) {
+        issues.add(issue);
     }
 
-    public boolean addAll(Collection<? extends Issue> items) {
-        return this.items.addAll(items);
+    public void saveAll(Collection<Issue> issues) {
+        this.issues.addAll(issues);
     }
 
-
-    public Issue getById(int id) {
-        for (Issue item : items) {
-            if (item.getId() == id) {
-                return item;
-            }
-
-        }
-        return null;
-
-    }
-
-    public boolean add(Issue item) {
-        return items.add(item);
-    }
-
-    public boolean remove(Issue item) {
-        return items.remove(item);
-    }
-
-    public boolean removeAll(Collection<? extends Issue> items) {
-        return this.items.removeAll(items);
-    }
-
-    public void closeById(int id) {
-        Issue[] result = new Issue[0];
-        for (Issue issues : getAll()) {
-
-            if (issues.getId() == id && !issues.isClose()) {
-                issues.setClose(true);
-            }
-
-        }
-    }
-
-    public void openById(int id) {
-        Issue[] result = new Issue[0];
-        for (Issue issues : getAll()) {
-
-            if (issues.getId() == id && issues.isClose()) {
-                issues.setClose(false);
-            }
-
-        }
-
-
-    }
+    public Collection<Issue> findAll() { return this.issues; }
 }
-
