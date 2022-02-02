@@ -3,6 +3,7 @@ package manager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import domain.Issue;
+import repository.Repository;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class IssuesManagerTest {
     private Manager manager = new Manager();
+    private Repository repository = new Repository();
 
     Issue issues1 = new Issue(1, "Iss1", 10, 45, true, "Lena", new HashSet<>(List.of("status", "theme:top", "theme:top")), new HashSet<>(List.of("Oleg")));
     Issue issues2 = new Issue(2, "Iss2", 12, 12, false, "Marina", new HashSet<>(List.of("status:blocked", "status:new", "theme")), new HashSet<>(List.of("Vic")));
@@ -30,13 +32,16 @@ class IssuesManagerTest {
 
     @Test
     void shouldShowOpenedIssues() {
+        repository.findAll();
         Collection<Issue> actual = manager.openedIssues();
         Collection<Issue> expected = List.of(issues1, issues3);
         assertEquals(expected, actual);
+
     }
 
     @Test
     void shouldShowClosedIssues() {
+        repository.findAll();
         Collection<Issue> actual = manager.closedIssues();
         Collection<Issue> expected = List.of(issues2, issues4, issues5);
         assertEquals(expected, actual);
@@ -44,6 +49,7 @@ class IssuesManagerTest {
 
     @Test
     void shouldShowAuthorIssues() {
+        repository.findAll();
         Collection<Issue> actual = manager.filterByAuthor("Lena");
         Collection<Issue> expected = List.of(issues1);
         assertEquals(expected, actual);
@@ -51,6 +57,7 @@ class IssuesManagerTest {
 
     @Test
     void shouldShowNothingAuthor() {
+        repository.findAll();
         Collection<Issue> actual = manager.filterByAuthor("lena");
         Collection<Issue> expected = List.of();
         assertEquals(expected, actual);
@@ -58,6 +65,7 @@ class IssuesManagerTest {
 
     @Test
     void shouldShowAssigneeIssues() {
+        repository.findAll();
         Collection<Issue> actual = manager.filterByAssignee("Vic");
         Collection<Issue> expected = List.of(issues2, issues4, issues5);
         assertEquals(expected, actual);
@@ -65,6 +73,7 @@ class IssuesManagerTest {
 
     @Test
     void shouldShowNothingAssignee() {
+        repository.findAll();
         Collection<Issue> actual = manager.filterByAssignee("vic");
         Collection<Issue> expected = List.of();
         assertEquals(expected, actual);
@@ -72,6 +81,7 @@ class IssuesManagerTest {
 
     @Test
     void shouldShowLabelIssues() {
+        repository.findAll();
         Collection<Issue> actual = manager.filterByLabel("type:bug");
         Collection<Issue> expected = List.of(issues3, issues4, issues5);
         assertEquals(expected, actual);
@@ -79,6 +89,7 @@ class IssuesManagerTest {
 
     @Test
     void shouldShowNothingLabel() {
+        repository.findAll();
         Collection<Issue> actual = manager.filterByLabel("type");
         Collection<Issue> expected = List.of();
         assertEquals(expected, actual);
@@ -86,6 +97,7 @@ class IssuesManagerTest {
 
     @Test
     void shouldShowOpenIssues() {
+        repository.findAll();
         manager.toOpenIssue(2);
         Collection<Issue> actual = manager.openedIssues();
         Collection<Issue> expected = List.of(issues1, issues2, issues3);
@@ -94,6 +106,7 @@ class IssuesManagerTest {
 
     @Test
     void shouldShowOpenOpenedIssues() {
+        repository.findAll();
         manager.toOpenIssue(1);
         Collection<Issue> actual = manager.openedIssues();
         Collection<Issue> expected = List.of(issues1, issues3);
@@ -102,6 +115,7 @@ class IssuesManagerTest {
 
     @Test
     void shouldShowCloseIssues() {
+        repository.findAll();
         manager.toCloseIssue(3);
         Collection<Issue> actual = manager.closedIssues();
         Collection<Issue> expected = List.of(issues2, issues3, issues4, issues5);
@@ -110,6 +124,7 @@ class IssuesManagerTest {
 
     @Test
     void shouldShowCloseClosedIssues() {
+        repository.findAll();
         manager.toCloseIssue(2);
         Collection<Issue> actual = manager.closedIssues();
         Collection<Issue> expected = List.of(issues2, issues4, issues5);
